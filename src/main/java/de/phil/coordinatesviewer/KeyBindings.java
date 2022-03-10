@@ -10,9 +10,9 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.lwjgl.glfw.GLFW;
 
 public class KeyBindings {
-    private static final String CATEGORY = "Coordinates";
+    private static final String CATEGORY = "Coordinates Viewer";
 
-    public static KeyMapping toggleCoordinatesDisplay = new KeyMapping("Coordinates", GLFW.GLFW_KEY_BACKSLASH,CATEGORY);
+    public static KeyMapping toggleCoordinatesDisplay = new KeyMapping("Toggle Coordinates", GLFW.GLFW_KEY_BACKSLASH, CATEGORY);
 
     public static void setUp() {
         ClientRegistry.registerKeyBinding(toggleCoordinatesDisplay);
@@ -26,7 +26,7 @@ public class KeyBindings {
             return;
         }
 
-        if(toggleCoordinatesDisplay.consumeClick()) {
+        if (toggleCoordinatesDisplay.consumeClick()) {
             GuiOverlay.displayCoordinates = !GuiOverlay.displayCoordinates;
         }
     }
