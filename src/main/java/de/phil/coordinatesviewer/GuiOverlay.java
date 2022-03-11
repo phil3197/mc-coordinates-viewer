@@ -22,10 +22,10 @@ public class GuiOverlay {
     }
 
     private static String getFormattedCoordinates() {
-        Vec3 playerCoordinates = Minecraft.getInstance().player.getEyePosition();
+        Vec3 playerCoordinates = Minecraft.getInstance().player.getPosition(0);
         String coordinatesString = String.format("X:%d Y:%d Z:%d",
                 (long) playerCoordinates.x,
-                (long) playerCoordinates.y - 1,
+                (long) playerCoordinates.y,
                 (long) playerCoordinates.z);
         return coordinatesString;
     }
