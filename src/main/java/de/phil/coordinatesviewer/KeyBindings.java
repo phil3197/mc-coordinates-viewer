@@ -4,8 +4,9 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.ClientRegistry;
 import net.minecraftforge.client.event.InputEvent;
+import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.lwjgl.glfw.GLFW;
 
@@ -14,20 +15,10 @@ public class KeyBindings {
 
     public static KeyMapping toggleCoordinatesDisplay = new KeyMapping("Toggle Coordinates", GLFW.GLFW_KEY_BACKSLASH, CATEGORY);
 
-    public static void setUp() {
-        ClientRegistry.registerKeyBinding(toggleCoordinatesDisplay);
-    }
-
     @OnlyIn(Dist.CLIENT)
-    @SubscribeEvent
-    public static void eventInput(InputEvent inputEvent) {
-        Minecraft mc = Minecraft.getInstance();
-        if (mc.player == null || Minecraft.getInstance().screen != null || Minecraft.getInstance().level == null) {
-            return;
-        }
-
-        if (toggleCoordinatesDisplay.consumeClick()) {
-            GuiOverlay.displayCoordinates = !GuiOverlay.displayCoordinates;
-        }
+    @SubscribeEvent(priority = EventPriority.HIGH)
+    public static void registerKeyBinding(RegisterKeyMappingsEvent event) {
+        event.register(toggleCoordinatesDisplay);
     }
+
 }

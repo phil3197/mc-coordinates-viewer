@@ -4,7 +4,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.InputEvent;
+import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -14,20 +15,43 @@ public class GuiOverlay {
 
     @OnlyIn(Dist.CLIENT)
     @SubscribeEvent(priority = EventPriority.HIGH)
-    public static void RenderGameOverlayEvent(RenderGameOverlayEvent event) {
-        if (!displayCoordinates || event.isCanceled() || event.getType() != RenderGameOverlayEvent.ElementType.TEXT) {
+    public static void renderGameOverlayEvent(RenderGuiOverlayEvent  event) {
+        if (!displayCoordinates || event.isCanceled()) {
             return;
         }
-        Minecraft.getInstance().font.drawShadow(event.getMatrixStack(), getFormattedCoordinates(), 4, 4, 0xffffffff);
+        Minecraft minecraft = Minecraft.getInstance();
+        minecraft.font.drawShadow(event.getPoseStack(), getFormattedCoordinates(minecraft), 4, 4, 0xffffffff);
     }
 
-    private static String getFormattedCoordinates() {
+    @OnlyIn(Dist.CLIENT)
+    @SubscribeEvent
+    public static void eventInput(InputEvent inputEvent) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player == null || Minecraft.getInstance().screen != null || Minecraft.getInstance().level == null) {
+            return;
+        }
+
+        if (KeyBindings.toggleCoordinatesDisplay.consumeClick()) {
+            GuiOverlay.displayCoordinates = !GuiOverlay.displayCoordinates;
+        }
+    }
+
+    private static String getFormattedCoordinates(Minecraft minecraft) {
         Vec3 playerCoordinates = Minecraft.getInstance().player.getPosition(0);
-        String coordinatesString = String.format("X:%d Y:%d Z:%d",
+
+        String coordinatesString = String.format("X:%d Y:%d Z:%d %s",
                 (long) playerCoordinates.x,
                 (long) playerCoordinates.y,
-                (long) playerCoordinates.z);
+                (long) playerCoordinates.z,
+                getDayTime(minecraft));
         return coordinatesString;
     }
 
+    private static String getDayTime(Minecraft minecraft) {
+        if (minecraft.level.getDayTime() < 12000) {
+            return "Day";
+        } else {
+            return "Night";
+        }
+    }
 }
