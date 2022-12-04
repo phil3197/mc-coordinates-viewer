@@ -15,7 +15,7 @@ public class GuiOverlay {
 
     @OnlyIn(Dist.CLIENT)
     @SubscribeEvent(priority = EventPriority.HIGH)
-    public static void renderGameOverlayEvent(RenderGuiOverlayEvent  event) {
+    public static void renderGameOverlayEvent(RenderGuiOverlayEvent event) {
         if (!displayCoordinates || event.isCanceled()) {
             return;
         }
@@ -48,10 +48,11 @@ public class GuiOverlay {
     }
 
     private static String getDayTime(Minecraft minecraft) {
-        if (minecraft.level.getDayTime() < 12000) {
-            return "Day";
-        } else {
+        float time = minecraft.level.getTimeOfDay(0);
+        if (time >= 0.25 && time <= 0.75) {
             return "Night";
+        } else {
+            return "Day";
         }
     }
 }
